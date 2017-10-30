@@ -68,7 +68,7 @@ class baiduPanSpider:
     def getSourcePage(self,url):
         #获取资源页面#
         try:
-            response = request(method='get', url=url, headers=headers)
+            response = request(method='get', url=url, headers=self.headers)
 
             # 打印分享页面源码#
             # 转换编码为utf-8
@@ -91,11 +91,9 @@ class baiduPanSpider:
 
         try:
             # post post post 「get」折腾我了一周#
-            response = post(url=url_post, headers=headers2, data=payload)
+            response = post(url=url_post, headers=self.headers, data=payload)
             result = loads(response.text)
             tag = result["errno"]
-
-            print(tag)
             if tag == 0:
                 print(result + "Add Success")
             else:
@@ -103,7 +101,6 @@ class baiduPanSpider:
         except Exception as e:
             print("Error:", str(e))
 
-c
 
 def main():
     global  Cookie,path,shareurl,filename
