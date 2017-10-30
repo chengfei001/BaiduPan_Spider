@@ -31,19 +31,13 @@ path:/
 
 
 res_content = r'"app_id":"(\d*)".*"path":"([^"]*)".*"uk":(\d*).*"bdstoken":"(\w*)".*"shareid":(\d*)'  # 正则，获取参数值
-shareurl = ''
 filename = ''
-Cookie = ''
 path = '/'
 
 
 class baiduPanSpider:
     def __init__(self):
         self.parameter = re.compile(res_content)
-
-        # self.shareurl = ''
-        # self.filename = ''
-        # self.Cookie = ''
         self.path = '/'
         self.app_id = ""
         self.uk = ""
@@ -63,7 +57,8 @@ class baiduPanSpider:
             }
 
     def run(self,url):
-
+        self.getSourcePage(url)  ##获取源码并分析
+        self.addToMyDisk()  ##添加资源到网盘
 
     def getSourcePage(self,url):
         #获取资源页面#
@@ -102,13 +97,7 @@ class baiduPanSpider:
             print("Error:", str(e))
 
 
-def main():
-    global  Cookie,path,shareurl,filename
-
-
-
 if __name__ == "__main__":
-    main()
     spider = baiduPanSpider()
 
     try:
@@ -118,5 +107,5 @@ if __name__ == "__main__":
             logging.info("shareurl:" + url)
             spider.run(url)
     except IOError:
-            logging.error("Error:filename error)"
+            logging.error("Error:filename error")
 
