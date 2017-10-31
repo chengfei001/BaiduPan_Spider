@@ -10,7 +10,7 @@
 * 解析源码，筛选出该页面分享资源的名称、shareid、from（uk)、bdstoken、appid（app_id）。
 * 构造post包（用来添加资源到网盘），该包需要用到以上4个参数，当然还有一个最重要的就是cookie
 在post包的url中还有一个logid参数，内容可以随便写，应该是个随机值然后做了base64加密。
-在post包的payload中，filelist是资源名称，格式filelist=['/name.mp4']，path为保存到那个目录下，格式path=/pathname
+在post包的payload中，filelist是资源名称，格式filelist=['/abc']，path为保存到那个目录下，格式path=/pathname
 '''
 
 
@@ -107,6 +107,7 @@ class baiduPanSpider:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     #实例化spidr类
     spider = baiduPanSpider()
 
