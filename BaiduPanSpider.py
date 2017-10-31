@@ -20,10 +20,9 @@
 __author__ = 'chengfei'
 __Data__ = '20171025'
 
-from requests import request, utils, post
+from requests import request, post
 from json import loads
 import re
-from argparse import ArgumentParser
 import logging
 
 '''
