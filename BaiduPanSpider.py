@@ -13,6 +13,10 @@
 在post包的payload中，filelist是资源名称，格式filelist=['/name.mp4']，path为保存到那个目录下，格式path=/pathname
 '''
 
+
+
+# cookie 需要登录后firefox中读取，可用使用插件「Tamper Data」
+
 __author__ = 'chengfei'
 __Data__ = '20171025'
 
@@ -29,7 +33,9 @@ filelist:['/新建文件夹(7)/姥姥语录-倪萍']
 path:/
 '''
 
+#正则表达式获取资源文件的重要信息
 res_content = r'"app_id":"(\d*)".*"path":"([^"]*)".*"uk":(\d*).*"bdstoken":"(\w*)".*"shareid":(\d*)'  # 正则，获取参数值
+#本地文件路径
 filename = '/Users/chengfei/Downloads/baidu_download.txt'
 path = '/'
 
@@ -51,6 +57,7 @@ class baiduPanSpider:
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'X-Requested-With': 'XMLHttpRequest',
             'Referer': 'https://pan.baidu.com/s/1bp0csmN',
+            #cookie需要从浏览器登录后获取
             'Cookie': 'BAIDUID=D32E0E6A74B4E4C441C9F738F621367F:FG=1; PANWEB=1; Hm_lvt_7a3960b6f067eb0085b7f96ff5e660b0=1509008858,1509347006,1509347062; cflag=15%3A3; FP_UID=49f66836d766350e8883279c0479925a; BDUSS=9Dd0p1aFo2b0N0UkRxUEszUFJrckNuVENYc3R6SWFmTXkyZGJ1eHRJNU5OQmxhSVFBQUFBJCQAAAAAAAAAAAEAAACZxAMAY2hlbmdmZWkwMDEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE2n8VlNp~FZMG; STOKEN=f462ded76da2ea1e9bf4a766b686670cd65740b84d7f41b6ec088751f8bc19f1; SCRC=a8095d2ab2d97437660899ad204b5a9c; Hm_lpvt_7a3960b6f067eb0085b7f96ff5e660b0=1509422353; PANPSC=12306614851535711420%3A9qIJoSpryQ%2Fb41ZnUGXO%2BMxDaFs%2FKMrufnkgCRPBFD%2Bqv5jBm4hVt4M6La9EbgvRTo4X8eRImYrkTnVbWpsideckY2sOTxob9i4CW8ceHnrqPo4uQmxPcVfUDd9arCIiYTASXnFzAgG1T%2BAf1Zi%2BmWNtiaXV6jA2rsgnNL%2BLYct9tn9thbnTpv7IiW4JizVanZlv3sbf6BI%3D',
             'Connection': 'keep-alive',
             'Cache-Control': 'max-age=0'
@@ -60,6 +67,7 @@ class baiduPanSpider:
         self.getSourcePage(url)  ##获取源码并分析
         self.addToMyDisk()  ##添加资源到网盘
 
+    # 获取资源文件，取得必要的信息
     def getSourcePage(self, url):
         # 获取资源页面#
         try:
@@ -77,9 +85,10 @@ class baiduPanSpider:
         except Exception as e:
             logging.error('Error in [getSourcePage]:', str(e))
 
+    # 将资源文件转存到登录账户的百度盘
     def addToMyDisk(self):
         url_post = 'https://pan.baidu.com/share/transfer?shareid=' + self.shareid + '&from=' + self.uk + '&ondup=newcopy&async=1&bdstoken=' + self.bdstoken + '&channel=chunlei&clienttype=0&web=1&app_id=' + self.app_id + '&logid=MTUwOTM0NzA4MDA5MjAuMzc5MjgwNzI0ODg3Mzc5Mg=='
-        payload = 'filelist=%5B%22' + self.path + '%22%5D&path=/mobi/'  # 资源名称与要保存的路径
+        payload = 'filelist=%5B%22' + self.path + '%22%5D&path=/mobi/'  # 资源名称与要保存的路径 %5B%22=【，%22%5D=】
 
         # logging.warning('[Info]Url_Post:', url_post)
         # logging.warning('[Info]payload:', payload)
@@ -99,13 +108,16 @@ class baiduPanSpider:
 
 
 if __name__ == '__main__':
+    #实例化spidr类
     spider = baiduPanSpider()
 
     try:
         with open(filename, 'r') as urlsFile:
+            # 将文件中的url读取进数组
             urls = [i.strip('\r').strip('\n') for i in urlsFile.readlines()]
             for url in urls:
                 logging.info('shareurl:' + url)
+                #开始获取资源文件信息，转存到我的百度盘
                 spider.run(url)
     except IOError:
         logging.error('Error:filename error')
